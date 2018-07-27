@@ -28,20 +28,6 @@ public class RideRepositoryImpl implements RideRepository {
 	@Override
 	public Ride createRide(Ride ride){
 		//jdbcTemplate.update("insert into ride (name, duration) values(?, ?)", ride.getName(), ride.getDuration());
-//		KeyHolder keyHolder = new GeneratedKeyHolder();
-//		jdbcTemplate.update(new PreparedStatementCreator() {
-//			
-//			@Override
-//			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-//				PreparedStatement ps = con.prepareStatement("insert into ride (name, duration) values(?, ?)", new String [] {"id"});
-//				ps.setString(1, ride.getName());
-//				ps.setInt(2, ride.getDuration());
-//				
-//				return ps;
-//			}
-//		}, keyHolder);
-//		
-//		Number id = keyHolder.getKey();
 		
 		SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate);
 		
@@ -75,6 +61,24 @@ public class RideRepositoryImpl implements RideRepository {
 	public List<Ride> getRides() {
 		List<Ride> rides = jdbcTemplate.query("select * from ride", new RideRowMapper());
 		return rides;
+	}
+	
+	@Override
+	public Ride updateRide(Ride ride) {
+		jdbcTemplate.update("update ride set name = ?, duration = ? where id = ?", 
+				ride.getName(), ride.getDuration(), ride.getId());
+		return ride;
+	}
+	
+	@Override
+	public void updateRides(List<Object[]> pairs) {
+		jdbcTemplate.batchUpdate("update ride set ride_date = ? where id = ?", pairs);
+		
+	}
+	
+	@Override
+	public void deleteRide(Integer id) {
+		jdbcTemplate.update("delete from ride where id = ?", id);
 	}
 	
 }
